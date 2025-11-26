@@ -1,57 +1,59 @@
 Production-Grade EKS Automation with Jenkins and Terraform
 
-This project demonstrates a full production-grade workflow for deploying and managing applications on Amazon EKS using Terraform for Infrastructure-as-Code and Jenkins for Continuous Integration and Delivery.
-It follows real-world DevOps practices including automated cluster provisioning, containerization, CI/CD pipeline execution, and Kubernetes-based deployment.
+This repository demonstrates a production-ready workflow for provisioning Amazon EKS clusters, deploying containerized applications, and automating the CI/CD process using Jenkins and Terraform.
 
-1. Project Overview
+1. Overview
 
-This repository automates the complete lifecycle of a Kubernetes environment on AWS:
+The project covers the complete DevOps pipeline:
 
-Provision EKS infrastructure using Terraform
+Infrastructure provisioning with Terraform
 
-Build and containerize the application using Docker
+Docker-based application containerization
 
-Push images to Amazon ECR
+Deployment to an Amazon EKS cluster
 
-Deploy and update Kubernetes workloads using kubectl
+Image storage and versioning using Amazon ECR
 
-Implement monitoring using Prometheus and Grafana
+Automated CI/CD workflow via Jenkins
 
-Automate all steps through a Jenkins pipeline
+Kubernetes manifests for application deployment
 
-This workflow mirrors modern DevOps practices used in production systems.
+Monitoring setup using Prometheus and Grafana
 
-2. Project Architecture
+2. Architecture Summary
 
-The solution includes:
+This solution includes:
 
-Amazon EKS cluster
+AWS VPC, subnets, routing, and networking resources
 
-Elastic Container Registry (ECR) for image storage
+Elastic Kubernetes Service (EKS) cluster with node groups
 
-Application deployment using Kubernetes manifests
+IAM roles and permissions
 
-Terraform modules for VPC, subnets, node groups, IAM roles
+Docker image build pipeline and ECR push
 
-Jenkins pipeline for automated build, provision, and deploy
+Kubernetes Deployment and Service configuration
 
-Prometheus and Grafana for monitoring and metrics
+Monitoring setup for cluster and application metrics
+
+CI/CD pipeline written in Groovy
 
 3. Repository Structure
+.
 ├── terraform-eks-infra
-│   ├── provider.tf
-│   ├── eks.tf
-│   ├── vpc.tf
-│   ├── data.tf
 │   ├── backend.tf
+│   ├── data.tf
+│   ├── eks.tf
+│   ├── provider.tf
+│   ├── vpc.tf
 │   ├── variables.tf
-│   └── variables/
+│   └── variables
 │       ├── dev.tfvars
 │       ├── prod.tfvars
 │       └── test.tfvars
 │
 ├── jenkins-config
-│   └── scripts/
+│   └── scripts
 │       └── install_build_tools.sh
 │
 ├── k8s-manifests
@@ -61,112 +63,115 @@ Prometheus and Grafana for monitoring and metrics
 ├── monitoring
 │   └── prometheus-config.yaml
 │
-├── CI-CD-pipeline.groovy
 ├── Dockerfile
+├── CI-CD-pipeline.groovy
 ├── changelog.txt
 └── README.md
 
-4. Features Implemented
-Infrastructure (Terraform)
+4. Features
+Terraform Infrastructure
 
-VPC provisioning
+Automated creation of AWS VPC
 
-Public/private subnets
+Subnets, route tables, and IGW
 
-Internet gateway and route tables
+EKS cluster provisioning
 
-EKS cluster creation
+Node group configurations
 
-Node groups with scaling policies
-
-IAM roles and permissions
+IAM policies and roles
 
 Application Deployment
 
-Docker container build
+Docker-based application build
 
 Kubernetes Deployment and Service
 
-Namespace-based application isolation
+Namespace-based isolation
 
-CI/CD Pipeline (Jenkins)
+Jenkins CI/CD Pipeline
 
 Code checkout
 
 Terraform init, plan, and apply
 
-Docker image build and tagging
+Docker build and tag
 
-ECR authentication
+ECR authentication and push
 
-Image push to ECR
-
-Kubernetes deployment rollout
+kubectl apply for deployment rollouts
 
 Monitoring
 
-Prometheus configuration
+Prometheus rules and configurations
 
-Grafana-ready setup
+Grafana-compatible metrics export
 
-5. Jenkins Pipeline Summary
+5. Jenkins Pipeline Workflow
 
-The Jenkins pipeline automates:
+Clone repository
 
-Checking out source code
+Initialize Terraform
 
-Provisioning or updating the EKS cluster using Terraform
+Validate plan and apply infrastructure
 
-Building and pushing Docker images to ECR
+Build and tag Docker image
 
-Applying Kubernetes manifests to deploy the application
+Push image to Amazon ECR
 
-Triggering automated rollouts for updated versions
+Deploy/upgrade application on EKS
 
-All steps are defined in CI-CD-pipeline.groovy.
+Apply Kubernetes manifests for services and rollouts
 
-6. How to Use This Project
-Prerequisites
+All logic is contained in:
+CI-CD-pipeline.groovy
 
-AWS CLI configured
+6. Prerequisites
 
-Terraform installed
+Ensure the following are installed and configured:
 
-kubectl installed
+AWS CLI
 
-Docker installed
+Terraform
 
-Jenkins (with required plugins)
+kubectl
 
-IAM permissions for EKS and ECR operations
+Docker
 
-Steps
+Jenkins with required plugins
 
-Update AWS values in variables.tf and *.tfvars
+IAM permissions for EKS, EC2, ECR, IAM
 
-Run Terraform to create the cluster
+7. How to Run
 
-Configure kubectl to connect to EKS
+Update Terraform variables inside variables.tf and .tfvars files
 
-Build and push Docker images
+Run Terraform:
 
-Apply Kubernetes manifests
+terraform init
+terraform plan -var-file=variables/dev.tfvars
+terraform apply -var-file=variables/dev.tfvars
 
-Trigger Jenkins pipeline to automate the entire process
 
-7. Why This Project Is Important
+Update kubeconfig:
 
-This project demonstrates real-world DevOps capabilities:
+aws eks update-kubeconfig --name <cluster-name>
 
-Infrastructure-as-Code using Terraform
 
-Kubernetes orchestration on Amazon EKS
+Build and push Docker image:
 
-Enterprise-grade CI/CD pipeline design
+docker build -t eks-app .
+docker tag eks-app:latest <AWS_ACCOUNT_ID>.dkr.ecr.<region>.amazonaws.com/eks-app:latest
+docker push <AWS_ACCOUNT_ID>.dkr.ecr.<region>.amazonaws.com/eks-app:latest
 
-Cloud-native application deployment
 
-Scalable and production-ready architecture
+Deploy application:
 
-It represents the complete DevOps lifecycle from code to production.
+kubectl apply -f k8s-manifests/deployment.yaml
+kubectl apply -f k8s-manifests/service.yaml
+
+
+Trigger Jenkins pipeline for automation
+
+
 
