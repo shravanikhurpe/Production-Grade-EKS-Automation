@@ -49,7 +49,7 @@ Kubernetes rollout via kubectl
 
 Groovy-based Jenkins pipeline
 
-3. Repository Structure
+Repository Structure
 production-grade-eks-automation
 ├── terraform-eks-infra
 │   ├── backend.tf
@@ -78,6 +78,7 @@ production-grade-eks-automation
 ├── Dockerfile
 ├── changelog.txt
 └── README.md
+
 
 4. Features
 Terraform Infrastructure
